@@ -1,0 +1,250 @@
+<DOCTIPE html>
+<head>
+<script>
+// スロットマシンを初期化する
+function init() {
+  // 各リールの絵柄を定義する
+  var symbols = ["cherry", "lemon", "orange", "plum", "bell", "bar", "seven"];
+  // 各リールを初期化する
+  for (var i = 1; i <= 3; i++) {
+    // リールをランダムに初期化する
+    var randomIndex = Math.floor(Math.random() * symbols.length);
+    setSymbol("reel-" + i, "symbol-1", symbols[(randomIndex + 0) % symbols.length]);
+    setSymbol("reel-" + i, "symbol-2", symbols[(randomIndex + 1) % symbols.length]);
+    setSymbol("reel-" + i, "symbol-3", symbols[(randomIndex + 2) % symbols.length]);
+  }
+  // スピンボタンをクリックしたときのイベントを設定する
+  document.getElementById("spin-button").addEventListener("click", function () {
+    // スピンボタンを無効化する
+    document.getElementById("spin-button").disabled = true;
+    // スピンアニメーションを開始する
+    spin("reel-1");
+    spin("reel-2");
+    spin("reel-3");
+  });
+}
+// 指定されたリールの指定された位置に指定された絵柄を設定する
+function setSymbol(reelId, symbolId, symbol) {
+  document.getElementById(reelId).querySelector("#" + symbolId).className = "symbol " + symbol;
+}
+// 指定されたリールを回転させる
+function spin(reelId) {
+  // ランダムな絵柄に変更するための乱数を生成する
+  var randomIndex = Math.floor(Math.random() * 7);
+  // リールを回転させるアニメーションを作成する
+  var reel = document.getElementById(reelId);
+  var symbols = reel.getElementsByClassName("symbol");
+  var duration = 2000 + Math.random() * 2000; // 回転時間
+  // 現在の位置
+  var position = 0;
+  // 回転アニメーションを開始する
+  var intervalId = setInterval(function () {
+        // リールを回転させる
+        for (var i = 0; i < symbols.length; i++) {
+          symbols[i].className = "symbol " + symbols[i].className.split(" ")[1];
+        }
+        position++;
+        symbols[position % symbols.length].className += " selected";
+        // 回転時間が終わったら停止する
+        if (duration <= 0) {
+          clearInterval(intervalId);
+          // リールを停止する
+          var selectedSymbol = symbols[position % symbols.length];
+          reel.insertBefore(selectedSymbol.cloneNode(true), reel.firstChild);
+          reel.removeChild(selectedSymbol);
+          setSymbol(reelId, "symbol-1", symbols[(position + 0) % symbols.length].className.split(" ")[1]);
+          setSymbol(reelId, "symbol-2", symbols[(position + 1) % symbols.length].
+              // リールを停止する
+              function stop(reelId) {
+                var reel = document.getElementById(reelId);
+                var symbols = reel.getElementsByClassName("symbol");
+                // 停止する絵柄を決定する
+                var stopSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                // 停止する絵柄を中央に揃えるために、スピン終了までに回転する回数を計算する
+                var stopSymbolIndex = Array.prototype.indexOf.call(symbols, stopSymbol);
+                var centerIndex = Math.floor(symbols.length / 2);
+                var spins = symbols.length * 3 + centerIndex - stopSymbolIndex;
+                // リールを回転させるアニメーションを作成する
+                var duration = 500 + Math.random() * 500; // 停止時間
+                var delay = 500 + Math.random() * 500; // アニメーション開始までの遅延時間
+                var spinAnimation = reel.animate([{
+                  transform: "rotateX(0deg)"
+                }, {
+                  transform: "rotateX(" + (360 * spins) + "deg)"
+                }], {
+                  duration: duration,
+                  delay: delay,
+                  easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                  fill: "both"
+                });
+                // アニメーションが終了したら、停止した絵柄に設定する
+                spinAnimation.addEventListener("finish", function () {
+                  stopSymbol.classList.add("selected");
+                  checkWin();
+                });
+              }
+              // 当たり判定を行い、結果を表示する
+              function checkWin() {
+                var symbols = [
+                  document.querySelector("#reel-1 .selected").className.split(" ")[1],
+                  document.querySelector("#reel-2 .selected").className.split(" ")[1],
+                  document.querySelector("#reel-3 .selected").className.split(" ")[1]
+                ];
+                // チェリーが1つ揃った場合
+                if (symbols.indexOf("cherry") !== -1 && symbols.indexOf("cherry") === symbols.lastIndexOf("cherry")) {
+                  showResult("WIN 5 COINS!");
+                }
+                // チェリーが2つ揃った場合
+                else if (symbols.indexOf("cherry") !== -1 && symbols.indexOf("cherry") !== symbols.lastIndexOf("cherry")) {
+                  showResult("WIN 10 COINS!");
+                }
+                // 異なる絵柄が揃った場合
+                else if (new Set(symbols).size === 3) {
+                  showResult("LOSE");
+                }
+                // BARが揃った場合
+                else if (symbols.indexOf("bar") !== -1 && symbols.indexOf("bar") === symbols.lastIndexOf("bar")) {
+                  showResult("WIN 20 COINS!");
+                }
+                // 7が揃った場合
+                else if (symbols.indexOf("seven") !== -1 && symbols.indexOf("seven") === symbols.lastIndexOf("seven")) {
+                  showResult("JACKPOT!");
+                }
+                // その他の場合
+                else {
+                  showResult("WIN 5 COINS!");
+                }
+              }
+              // 結果を表示する
+              function showResult(result) {
+                document.getElementById("result").innerHTML = result;
+                // スピンアニメーションが完了したことをチェックするためのカウンターを定義する
+                var counter = 0;
+                // アニメーション完了時に呼び出されるコールバック関数を定義する
+                var callback = function () {
+                  counter++;
+                  javascript
+                  Copy code
+                  // すべてのリールがアニメーション完了した場合
+                  if (counter === 3) {
+                    // スピンアニメーションを終了する
+                    document.getElementById("reel-1").classList.remove("spinning");
+                    document.getElementById("reel-2").classList.remove("spinning");
+                    document.getElementById("reel-3").classList.remove("spinning");
+                    // スピンボタンを有効化する
+                    document.getElementById("spin-button").disabled = false;
+                    // 結果をチェックする
+                    var result = checkResult();
+                    showResult(result);
+                  }
+                };
+                // リールを停止する
+                stop("reel-1", callback);
+                stop("reel-2", callback);
+                stop("reel-3", callback);
+              }
+              // 指定されたリールを停止させる
+              function stop(reelId, callback) {
+                // リールの現在の位置を取得する
+                var reel = document.getElementById(reelId);
+                var symbols = reel.getElementsByClassName("symbol");
+                var currentSymbolIndex = 0;
+                for (var i = 0; i < symbols.length; i++) {
+                  if (symbols[i].className.indexOf("current") !== -1) {
+                    currentSymbolIndex = i;
+                    break;
+                  }
+                }
+                // リールを停止させるアニメーションを作成する
+                var targetSymbolIndex = Math.floor(Math.random() * symbols.length);
+                var distance = (symbols.length + targetSymbolIndex - currentSymbolIndex) % symbols.length;
+                var duration = 1000 + Math.random() * 1000;
+                var startTime = null;
+                var animate = function (timestamp) {
+                  if (!startTime) {
+                    startTime = timestamp;
+                  }
+                  scss
+                  Copy code
+                  var elapsed = timestamp - startTime;
+                  var progress = elapsed / duration;
+                  if (progress > 1) {
+                    progress = 1;
+                  }
+                  var symbolIndex = currentSymbolIndex + Math.floor(distance * progress);
+                  symbolIndex %= symbols.length;
+                  for (var i = 0; i < symbols.length; i++) {
+                    symbols[i].classList.remove("current");
+                  }
+                  symbols[symbolIndex].classList.add("current");
+                  if (progress < 1) {
+                    requestAnimationFrame(animate);
+                  } else {
+                    callback();
+                  }
+                };
+                // リールを停止させるアニメーションを開始する
+                reel.classList.add("spinning");
+                requestAnimationFrame(animate);
+              }
+              // 結果をチェックする
+              function checkResult() {
+                // 各リールの現在の絵柄を取得する
+                var reel1Symbol = document.getElementById("reel-1").getElementsByClassName("current")[0].classList[1];
+                var reel2Symbol = document.getElementById("reel-2").getElementsByClassName("current")[0].classList[1];
+                var reel3Symbol = document.getElementById("reel-3").getElementsByClassName("current")[0].classList[1];
+                // スピン終了後に結果をチェックする
+                function checkResult() {
+                  // 各リールの現在の絵柄を取得する
+                  var reel1Symbol = document.getElementById("reel-1").getElementsByClassName("current")[0].classList[1];
+                  var reel2Symbol = document.getElementById("reel-2").getElementsByClassName("current")[0].classList[1];
+                  var reel3Symbol = document.getElementById("reel-3").getElementsByClassName("current")[0].classList[1];
+                  // チェック結果を初期化する
+                  var result = "";
+                  // 絵柄が全て同じ場合
+                  if (reel1Symbol === reel2Symbol && reel2Symbol === reel3Symbol) {
+                    // セブンの場合
+                    if (reel1Symbol === "seven") {
+                      result = "JACKPOT!!";
+                    } else {
+                      result = "Big Win!!";
+                    }
+                  }
+                  // 絵柄がどれか一つでも "bar" の場合
+                  else if (reel1Symbol === "bar" || reel2Symbol === "bar" || reel3Symbol === "bar") {
+                    result = "Lose...";
+                  }
+                  // それ以外の場合
+                  else {
+                    result = "Small Win!";
+                  }
+                  // 結果を表示する
+                  showResult(result);
+                }
+                // スピンボタンを有効化する
+                document.getElementById("spin-button").disabled = false;
+              }
+              // スロットマシンを初期化する
+              init();
+</script>
+</head>
+<body>
+<div id="slot-machine">
+  <div class="reel" id="reel-1">
+    <div class="symbol" id="symbol-1"></div>
+    <div class="symbol" id="symbol-2"></div>
+    <div class="symbol" id="symbol-3"></div>
+  </div>
+  <div class="reel" id="reel-2">
+    <div class="symbol" id="symbol-4"></div>
+    <div class="symbol" id="symbol-5"></div>
+    <div class="symbol" id="symbol-6"></div>
+  </div>
+  <div class="reel" id="reel-3">
+    <div class="symbol" id="symbol-7"></div>
+    <div class="symbol" id="symbol-8"></div>
+    <div class="symbol" id="symbol-9"></div>
+  </div>
+  <button id="spin-button">Spin</button>
+</div>
+</body>
